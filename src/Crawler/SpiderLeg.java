@@ -36,20 +36,33 @@ public class SpiderLeg extends Thread{
                 currentURL = urlQueue.take();
                 Document doc = getDocument(currentURL);
                 if (doc == null || doc.text().isEmpty())
-                {
                     continue;
+
+                // TODO: Fix
+                // TODO: Doesn't handle interrupted twice
+                try {
+                    documentQueue.put(currentURL + "||" + doc.text());
+                } catch (InterruptedException e) {
+                    documentQueue.put(currentURL + "||" + doc.text());
+                    throw e;
                 }
-                //TODO: Fix
-                documentQueue.put(currentURL + "||" + doc.text());
-                System.out.println(documentCount.incrementAndGet());
+
+                documentCount.getAndIncrement();
                 Elements newURLs = doc.select("a[href]");
                 newURLList = toStringSet(newURLs);
                 for (String url : newURLList){
                     if(urlMap.merge(url, 1, Integer::sum) == 1)
                         urlQueue.add(url);
                 }
+                if(this.isInterrupted())
+                    throw new InterruptedException();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                try {
+                    sleep(Long.MAX_VALUE);
+                } catch (InterruptedException e1) {
+                    System.out.println("Error: SpiderLeg Interrupted during Interruption");
+                    e1.printStackTrace();
+                }
             }catch(IllegalStateException e){
                 //e.printStackTrace();
                 //System.out.println("Shared Queue might be full");
@@ -78,11 +91,13 @@ public class SpiderLeg extends Thread{
                     .followRedirects(true)
                     .maxBodySize(Integer.MAX_VALUE);
             Document doc = connection.get();
-            if(connection.response().statusCode() == 200)
-                    return doc;
+            if(connection.response().statusCode() == 200){
+                System.out.println("Success: " + url);
+                return doc;
+            }
         }catch (IOException e){
             System.out.println("Error: " + url);
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         return null;
     }
