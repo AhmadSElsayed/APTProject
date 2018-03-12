@@ -2,10 +2,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.lang.StringBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 
 public class Utilities {
 
@@ -82,7 +84,7 @@ public class Utilities {
         }
         catch (IOException ex) {
 
-            ex.printStackTrace();
+           // ex.printStackTrace();
         }
         return siteMap;
     }
@@ -120,7 +122,7 @@ public class Utilities {
             }
         }
         catch (IOException ex) {
-            ex.printStackTrace();
+          //  ex.printStackTrace();
         }
 
         return siteMapLinks;
@@ -128,15 +130,31 @@ public class Utilities {
 
 
 
-//    public static void siteMapFetcherV2(String xmlLink) throws Exception{ //jsoup exception
-//
-//        URL xml = new URL(xmlLink);
-//        String html =  toString(xml);
-//        System.out.println(html);
-//        Document doc = Jsoup.parse(html, "", Parser.xmlParser());
-//        for (Element e : doc.select("loc")) {
-//            System.out.println(e);
-//        }
+    /**
+     * removes Hashes/question marks in links(that links to the same page)
+     * #@param  String Link the link to be cleaned
+     *
+     * @return String newLink or -1 if it is already clean
+     */
+    public static String linkCleaner(String link) {
 
-// }
+        //remove hashing
+       int index = link.indexOf("#");
+       int index1 = link.indexOf("?"); //indexOf returns -1 if it didn't find the specific char/string
+
+        //removing # in links if found
+       if(index != -1){
+           StringBuilder newLink = new StringBuilder(link);
+           newLink.delete(index,link.length());
+           return newLink.toString();
+       }
+
+       //removing ? in links if found
+       else if(index1 != -1){
+           StringBuilder newLink = new StringBuilder(link);
+           newLink.delete(index1,link.length());
+           return newLink.toString();
+       }
+      return "-1";
+    }
 }

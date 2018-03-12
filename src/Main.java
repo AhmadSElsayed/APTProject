@@ -18,7 +18,6 @@ public class Main {
 
 //                testing sitemaps(uncomment to test)
 //      NOTE ,empty xml links aka empty urls throws an exception
-//       @TODO Abzo ,implement a special exception handler
 //
 //        ArrayList<String> links;
 //        String abzo = Utilities.getSiteMapLink("https://jsoup.org/robots.txt");
@@ -29,7 +28,9 @@ public class Main {
 //
 //            System.out.println("List item: " + lstitem);
 //        }
-
-
+//
+//                 testing linkCLeaner();
+//        String link = "https://en.wikipedia.org/wiki/Crocodile#See_also";//https://www.youtube.com/watch?v=WsEmZU7U124
+//       System.out.println( Utilities.linkCleaner(link));
     }
 }
