@@ -1,8 +1,18 @@
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.lang.StringBuilder;
+import java.net.URL;
+
+
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -40,7 +50,7 @@ public class Utilities {
                         if (line.contains("Disallow:"))
 
                             //get all the disallowed links
-                            links.add(line.replaceAll("Disallow: ", ""));
+                            links.add(line.replaceAll("Disallow:", ""));
 
                             //return if u found User-agent
                         else if (line.contains("User-agent:"))
@@ -136,6 +146,7 @@ public class Utilities {
      *
      * @return String newLink or -1 if it is already clean
      */
+    @NotNull
     public static String linkCleaner(String link) {
 
         //remove hashing
@@ -157,4 +168,113 @@ public class Utilities {
        }
       return "-1";
     }
+
+
+
+    /**
+     * checks for the link in the robot.txt
+     * #@param  String Link the link u want to check
+     * #@param  String one of the links in robot.txt
+     *
+     * @return boolean true if link is found in robot.txt
+     */
+    public static boolean stringMatcher(String link, String oneRobotLink){
+
+        return (link.contains(oneRobotLink)) ;
+    }
+
+
+
+    /**
+     * saves a HashMap of type String,Integer in the form of  "string" AKA URL,  "int" AKA document #
+     * #@param  HashMap theMap of String,Integer
+     * #@param  String fileName
+     *
+     * @return boolean true if link is found in robot.txt
+     */
+    public static void saveMap(HashMap< String,Integer> theMap ,String fileName) throws Exception
+    {
+
+        PrintWriter outFile = new PrintWriter(fileName + ".txt");
+
+        for (HashMap.Entry<String, Integer> pair : theMap.entrySet()) {
+
+            outFile.println(pair.getKey()+" "+pair.getValue());
+        }
+        outFile.close ();
+    }
+
+
+
+    /**
+     * saves data(URL->#) of file in a map
+     * #@param String textFilePath name without extension
+     *
+     * @return HashMap
+     */
+    public static HashMap<String, Integer> getMapFromFile(String textFilePath)throws Exception
+    {
+        // Open the file
+        FileInputStream fstream = new FileInputStream(textFilePath+".txt");
+        BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+
+        //create the storage (map/array..etc)
+        HashMap<String, Integer> fileMap = new HashMap<String , Integer>();
+        String strLine;
+
+        //Read File Line By Line
+        while ((strLine = br.readLine()) != null)   {
+
+            //splitting the line
+            String[] splitStr = strLine.split("\\s+"); //split by spaces
+
+            // save to map
+            fileMap.put(splitStr[0],Integer.parseInt(splitStr[1]));
+        }
+
+        //Close the input stream
+        br.close();
+        return fileMap;
+    }
+
+
+
+    /**
+     * creates a pattern list from an ArrayList of Strings(URLS of robot.txt)
+     * #@param ArrayList robotTxtLinks links fetched from robot.txt
+     *
+     * @return ArrayList Pattern
+     */
+    public static ArrayList<Pattern>  patternCreatort(ArrayList<String> robotTxtLinks)
+    {
+        //creating a pattern arraylist
+        ArrayList<Pattern> disallowed = new ArrayList<Pattern>();
+
+        //iterate over the links of robot.txt
+        for(String robot : robotTxtLinks)
+        {
+            disallowed.add(Pattern.compile("(.*)"+robot+"(.*)"));
+        }
+        return disallowed;
+    }
+
+
+
+    /**
+     * tests a given link if it's disallowed to be fetched (true if it's disallowed)
+     * #@param String link , the link u are testing
+     * #@param ArrayList Pattern disallowed ,a pattern list
+     *
+     * @return boolean
+     */
+    public static boolean isLinkInRobot(String link,ArrayList<Pattern> disallowed)
+    {
+        for (Pattern eachRobotLink : disallowed)
+
+            if (eachRobotLink.matcher(link).matches()) return true;
+
+        return false;
+
+    }
+
 }

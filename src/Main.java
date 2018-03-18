@@ -1,5 +1,6 @@
 import java.util.ArrayList;
-
+import java.util.HashMap;
+import java.util.regex.Pattern;
 
 public class Main {
 
@@ -32,5 +33,25 @@ public class Main {
 //                 testing linkCLeaner();
 //        String link = "https://en.wikipedia.org/wiki/Crocodile#See_also";//https://www.youtube.com/watch?v=WsEmZU7U124
 //       System.out.println( Utilities.linkCleaner(link));
+
+        //Utilities.stringMatcher("ab");
+
+
+//                  testing saveMap();
+//        HashMap <String, Integer> hm = new HashMap<String, Integer>();
+//        hm.put("abzo.com",2);
+//        hm.put("fuckYou.net",3);
+//
+//        Utilities.saveMap(hm,"Abzo");
+
+//                  testing getMapFromFile
+//          HashMap <String, Integer> hm = new HashMap<String, Integer>();
+//          hm = Utilities.getMapFromFile("Abzo");
+//          Utilities.saveMap(hm,"NotAbzo");
+
+//                  testing patternCreator() and isLinkInRobot()
+//       ArrayList<Pattern> links = Utilities.patternCreatort(Utilities.robotFetcher("http://www.mbc.net/robots.txt"));
+//       System.out.println(Utilities.isLinkInRobot("www.mbc.net/rss/abzo",links));
+
     }
 }
