@@ -26,5 +26,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="guava-24.0-jre" level="project" />
+    <orderEntry type="library" name="args4j:args4j:2.33" level="project" />
   </component>
 </module>

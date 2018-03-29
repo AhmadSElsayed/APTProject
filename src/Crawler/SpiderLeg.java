@@ -4,7 +4,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,7 +16,6 @@ public class SpiderLeg extends Thread{
     private BlockingQueue<String> documentQueue;
     private AtomicInteger documentCount;
 	private int maxDocumentCount;
-
 
 	public SpiderLeg(BlockingQueue<String> urlQueue, ConcurrentHashMap<String, Integer> urlMap, BlockingQueue<String> documentQueue, AtomicInteger documentCount, int maxDocumentCount){
 		this.urlQueue = urlQueue;
@@ -41,9 +39,9 @@ public class SpiderLeg extends Thread{
                 // TODO: Fix
                 // TODO: Doesn't handle interrupted twice
                 try {
-                    documentQueue.put(currentURL + "||" + doc.text());
+                    documentQueue.put(currentURL + "!" + doc.text().replaceAll("[^a-zA-Z0-9 ]", " "));
                 } catch (InterruptedException e) {
-                    documentQueue.put(currentURL + "||" + doc.text());
+                    documentQueue.put(currentURL + "!" + doc.text().replaceAll("[^a-zA-Z0-9 ]", " "));
                     throw e;
                 }
 
@@ -51,6 +49,7 @@ public class SpiderLeg extends Thread{
                 Elements newURLs = doc.select("a[href]");
                 newURLList = toStringSet(newURLs);
                 for (String url : newURLList){
+                    url = Utilities.linkCleaner(url);
                     if(urlMap.merge(url, 1, Integer::sum) == 1)
                         urlQueue.add(url);
                 }
@@ -60,8 +59,7 @@ public class SpiderLeg extends Thread{
                 try {
                     sleep(Long.MAX_VALUE);
                 } catch (InterruptedException e1) {
-                    System.out.println("Error: SpiderLeg Interrupted during Interruption");
-                    e1.printStackTrace();
+                    //
                 }
             }catch(IllegalStateException e){
                 //e.printStackTrace();
@@ -95,7 +93,7 @@ public class SpiderLeg extends Thread{
                 System.out.println("Success: " + url);
                 return doc;
             }
-        }catch (IOException e){
+        }catch (Exception e){
             System.out.println("Error: " + url);
             //e.printStackTrace();
         }

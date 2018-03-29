@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.lang.StringBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,6 +14,7 @@ class Utilities {
     /**
      * Fetches all the disallowed links in robot.txt
      * @param theLink the Url of robot.txt
+     *
      * @return string ArrayList
      */
     static ArrayList<String> robotFetcher(String theLink) {
@@ -50,6 +52,7 @@ class Utilities {
     /**
      * gets the location (url) of the sitemap in robot.txt
      * @param robotLink the link of robot.txt
+     *
      * @return String link of siteMap if found or -1 if not found
      */
     static String getSiteMapLink(String robotLink) {
@@ -66,14 +69,15 @@ class Utilities {
             }
         }
         catch (IOException ex) {
-            ex.printStackTrace();
+            // ex.printStackTrace();
         }
         return siteMap;
     }
 
     /**
      * fetches all the links in the sitemap url
-     * @param  xmlLink the link of sitemap
+     * @param xmlLink the link of sitemap
+     *
      * @return String ArrayList of links
      */
     static ArrayList<String> siteMapFetcher(String xmlLink)  {
@@ -94,8 +98,34 @@ class Utilities {
             }
         }
         catch (IOException ex) {
-            ex.printStackTrace();
+            //  ex.printStackTrace();
         }
+
         return siteMapLinks;
+    }
+
+    /**
+     * removes Hashes/question marks in links(that links to the same page)
+     * @param  link the link to be cleaned
+     *
+     * @return String newLink or -1 if it is already clean
+     */
+    static String linkCleaner(String link) {
+        //remove hashing
+        int hashIndex = link.indexOf("#");
+        int questionIndex = link.indexOf("?"); //indexOf returns -1 if it didn't find the specific char/string
+        //removing # in links if found
+        if(hashIndex != -1){
+            StringBuilder newLink = new StringBuilder(link);
+            newLink.delete(hashIndex,link.length());
+            return newLink.toString();
+        }
+        /*//removing ? in links if found
+        else if(questionIndex != -1){
+            StringBuilder newLink = new StringBuilder(link);
+            newLink.delete(questionIndex,link.length());
+            return newLink.toString();
+        }*/
+       return link;
     }
 }
