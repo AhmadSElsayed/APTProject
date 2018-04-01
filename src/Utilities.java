@@ -22,12 +22,13 @@ import org.jsoup.select.Elements;
 public class Utilities {
 
     /**
-     * Fetches all the disallowed links in robot.txt
+     * Fetchese either the disallowed or allowed links in robot.txt
      * #@param String theLink the Url of robot.txt
+     * #@param boolean getDisallow  ,if  true it will get disallowed linkes
      *
      * @return string ArrayList
      */
-    public static ArrayList<String> robotFetcher(String theLink) {
+    public static ArrayList<String> robotFetcher(String theLink , boolean getDisallow) {
         //array of links
         ArrayList<String> links = new ArrayList<>();
         try {
@@ -46,15 +47,31 @@ public class Utilities {
                     while (robotScanner.hasNextLine()) {
                         line = robotScanner.nextLine();
 
-                        //search for disallow
-                        if (line.contains("Disallow:"))
 
-                            //get all the disallowed links
-                            links.add(line.replaceAll("Disallow:", ""));
+                        if (getDisallow) {
 
-                            //return if u found User-agent
-                        else if (line.contains("User-agent:"))
-                            return links;
+                            //search for disallow
+                            if (line.contains("Disallow:"))
+
+                                //get all the disallowed links
+                                links.add(line.replaceAll("Disallow:", ""));
+
+                                //return if u found User-agent
+                            else if (line.contains("User-agent:"))
+                                return links;
+                        }
+                        else {
+
+                            //search for Allow
+                            if (line.contains("Allow:"))
+
+                                //get all the Allowed links
+                                links.add(line.replaceAll("Allow:", ""));
+
+                                //return if u found User-agent
+                            else if (line.contains("User-agent:"))
+                                return links;
+                        }
                     }
                 }
             }
@@ -172,20 +189,6 @@ public class Utilities {
 
 
     /**
-     * checks for the link in the robot.txt
-     * #@param  String Link the link u want to check
-     * #@param  String one of the links in robot.txt
-     *
-     * @return boolean true if link is found in robot.txt
-     */
-    public static boolean stringMatcher(String link, String oneRobotLink){
-
-        return (link.contains(oneRobotLink)) ;
-    }
-
-
-
-    /**
      * saves a HashMap of type String,Integer in the form of  "string" AKA URL,  "int" AKA document #
      * #@param  HashMap theMap of String,Integer
      * #@param  String fileName
@@ -202,6 +205,8 @@ public class Utilities {
             outFile.println(pair.getKey()+" "+pair.getValue());
         }
         outFile.close ();
+
+
     }
 
 

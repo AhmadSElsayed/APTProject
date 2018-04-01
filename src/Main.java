@@ -9,7 +9,7 @@ public class Main {
 //              testing robot.txt fetcher (uncomment to test)
 //
 //        ArrayList<String> links = new ArrayList<>();
-//       links = Utilities.robotFetcher("https://twitter.com/robots.txt");//https://www.facebook.com/robots.txt/http://www.mbc.net/robots.txt
+//       links = Utilities.robotFetcher("https://twitter.com/robots.txt" , false);//https://www.facebook.com/robots.txt/http://www.mbc.net/robots.txt
 //        for(String lstitem : links){
 //
 //            System.out.println("List item: " + lstitem);
