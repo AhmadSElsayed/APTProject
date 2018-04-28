@@ -54,14 +54,15 @@ class DatabaseManager {
         }
     }
 
-    Object[] executeQueryList(String query, String obj){
+    Object[] executeQueryList(String query, int columns){
         ArrayList<Object> o = new ArrayList<>();
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
             connection.commit();
             while (resultSet.next())
-                o.add(resultSet.getObject(obj));
+                for(int i = 1; i <= columns; i++)
+                    o.add(resultSet.getObject(i));
             resultSet.close();
             statement.close();
         } catch (SQLException e) {
