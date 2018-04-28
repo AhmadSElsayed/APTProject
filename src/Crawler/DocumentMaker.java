@@ -16,11 +16,11 @@ class DocumentMaker extends Thread {
     private PrintWriter outputStream;
     private CrawlerDataManager databaseManager;
 
-    DocumentMaker(BlockingQueue<String> documentQueue, long maxDocumentCount, String IP, int port, int priority) throws IOException, SQLException, ClassNotFoundException {
+    DocumentMaker(BlockingQueue<String> documentQueue, long maxDocumentCount, String IP, int port, int priority, boolean sitemap) throws IOException, SQLException, ClassNotFoundException {
         this.setPriority(priority);
         this.documentQueue = documentQueue;
         this.maxDocumentCount = maxDocumentCount;
-        databaseManager = new CrawlerDataManager();
+        databaseManager = new CrawlerDataManager(sitemap);
         indexerSocket = new Socket(IP, port);
         outputStream = new PrintWriter(indexerSocket.getOutputStream());
     }
@@ -50,5 +50,7 @@ class DocumentMaker extends Thread {
         } catch (SQLException | InterruptedException | IOException e) {
             e.printStackTrace();
         }
+        System.out.println("Maker Finished");
+
     }
 }

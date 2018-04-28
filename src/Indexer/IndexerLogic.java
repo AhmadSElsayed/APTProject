@@ -3,6 +3,8 @@ package Indexer;
 import Database.IndexerDataManager;
 import org.tartarus.snowball.SnowballStemmer;
 import org.tartarus.snowball.ext.englishStemmer;
+
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -142,7 +144,7 @@ public class IndexerLogic {
         put("up", "yes");
     }};
 
-    IndexerLogic() throws SQLException, ClassNotFoundException {
+    IndexerLogic() throws SQLException, ClassNotFoundException, IOException {
         this.databaseManager = new IndexerDataManager();
     }
 

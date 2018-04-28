@@ -1,18 +1,25 @@
 package Database;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Properties;
 
-public class DatabaseManager {
+class DatabaseManager {
 
     private Connection connection;
 
-    public DatabaseManager() throws ClassNotFoundException, SQLException {
-        Class.forName("org.postgresql.Driver");
-        String uri = "jdbc:postgresql://localhost:5432/crawler";
+    DatabaseManager() throws ClassNotFoundException, SQLException, IOException {
+        Properties configuration = new Properties();
+        configuration.load(new FileInputStream("Database.config"));
+
+        Class.forName(configuration.getProperty("class"));
+        String uri = configuration.getProperty("connection");
         Properties properties = new Properties();
-        properties.setProperty("user","postgres");
-        properties.setProperty("password","1234");
+        properties.setProperty("user",configuration.getProperty("user"));
+        properties.setProperty("password",configuration.getProperty("password"));
         connection = DriverManager.getConnection(uri, properties);
+        connection.setAutoCommit(false);
     }
 
     public void closeConnection() throws SQLException {
@@ -20,11 +27,12 @@ public class DatabaseManager {
         connection = null;
     }
 
-    public Object executeQuery(String query, String obj){
+    Object executeQuery(String query, String obj){
         Object o = null;
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
+            connection.commit();
             while (resultSet.next())
                 o = resultSet.getObject(obj);
             resultSet.close();
@@ -35,23 +43,43 @@ public class DatabaseManager {
         return o;
     }
 
-    public void executeUpdate(String query){
+    void executeUpdate(String query){
         try {
             Statement statement = connection.createStatement();
             statement.executeUpdate(query);
+            connection.commit();
             statement.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public void executeBatch(String[] query){
+    Object[] executeQueryList(String query, String obj){
+        ArrayList<Object> o = new ArrayList<>();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            connection.commit();
+            while (resultSet.next())
+                o.add(resultSet.getObject(obj));
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return o.toArray(new Object[0]);
+    }
+
+    @Deprecated
+    void executeBatch(String[] query){
         try {
             Statement statement = connection.createStatement();
             for(String q : query) {
                 statement.addBatch(q);
             }
             statement.executeBatch();
+            connection.commit();
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println(e.getNextException().getMessage());

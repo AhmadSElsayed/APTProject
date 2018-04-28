@@ -1,11 +1,14 @@
 package Crawler;
 
+import CrawlerUtilities.CrawlerUtilities;
 import Database.CrawlerDataManager;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.concurrent.BlockingQueue;
@@ -16,10 +19,10 @@ class SpiderLeg extends Thread{
 	private long maxDocumentCount;
 	private CrawlerDataManager databaseManager;
 
-	SpiderLeg(BlockingQueue<String> documentQueue, long maxDocumentCount, int priority) throws SQLException, ClassNotFoundException {
+	SpiderLeg(BlockingQueue<String> documentQueue, long maxDocumentCount, int priority, boolean sitemap) throws SQLException, ClassNotFoundException, IOException {
 		this.documentQueue = documentQueue;
 		this.maxDocumentCount = maxDocumentCount;
-		this.databaseManager = new CrawlerDataManager();
+		this.databaseManager = new CrawlerDataManager(sitemap);
 		this.setPriority(priority);
 	}
 
@@ -48,6 +51,7 @@ class SpiderLeg extends Thread{
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
+        System.out.println("Crawler Finished");
     }
 
     private String[] extractLinkList(Document document) {

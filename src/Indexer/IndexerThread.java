@@ -11,7 +11,7 @@ public class IndexerThread extends Thread{
     private IndexerLogic indexerLogic;
     private boolean update;
 
-    IndexerThread(Socket clientSocket, boolean update) throws SQLException, ClassNotFoundException {
+    IndexerThread(Socket clientSocket, boolean update) throws SQLException, ClassNotFoundException, IOException {
         this.clientSocket=clientSocket;
         this.indexerLogic = new IndexerLogic();
         this.update = update;
@@ -36,5 +36,6 @@ public class IndexerThread extends Thread{
         } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
+        System.out.println("Indexer Finished");
   }
 }

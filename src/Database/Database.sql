@@ -15,7 +15,6 @@ DROP SEQUENCE if EXISTS robots_id_seq;
 -- Create Tables
 create sequence visited_links_id_seq;
 create sequence seed_set_id_seq;
-create sequence robots_id_seq;
 create table visited_links
 (
   id BIGINT default nextval('visited_links_id_seq'::regclass) not null primary key,
@@ -28,10 +27,11 @@ create table seed_set
   url text not null unique
 );
 
+--create sequence robots_id_seq;
 create table robots
 (
-  id BIGINT default nextval('robots_id_seq'::regclass) not null primary key,
-  base_url text not null unique,
+  --id BIGINT default nextval('robots_id_seq'::regclass) not null primary key,
+  base_url text not null PRIMARY KEY,
   regex text not null
 );
 -- Indexer Database
